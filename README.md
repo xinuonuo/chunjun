@@ -1,104 +1,72 @@
-Chunjun
-============
+```mermaid
+graph TD;
+    subgraph 用户界面
+        A[用户注册模块]
+        B[用户登录模块]
+        C[健康数据输入模块]
+        D[健康报告展示模块]
+        E[通知中心模块]
+    end
 
-[![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
+    subgraph API 控制器
+        F[用户管理模块]
+        G[健康数据管理模块]
+        H[报告生成模块]
+        I[通知管理模块]
+    end
 
-English | [中文](README_CH.md)
+    subgraph 健康管理服务
+        J[数据分析模块]
+        K[报告生成模块]
+        L[建议生成模块]
+        M[风险评估模块]
+    end
 
-# Communication
+    subgraph 数据存储
+        N[用户数据存储]
+        O[健康数据存储]
+        P[报告存储]
+    end
 
-- We are recruiting **Big data platform development engineers**.If you want more information about the position, please add WeChat ID [**ysqwhiletrue**] or email your resume to [sishu@dtstack.com](mailto:sishu@dtstack.com).
+    subgraph 通知服务
+        Q[邮件通知模块]
+        R[推送通知模块]
+        S[消息队列模块]
+    end
 
-- We use [DingTalk](https://www.dingtalk.com/) to communicate,You can search the group number [**30537511**] or scan the QR code below to join the communication group
-  
-  <div align=center>
-     <img src=docs/images/IMG_3362.JPG width=300 />
-   </div>
+    subgraph 可穿戴设备接口
+        T[数据接收模块]
+        U[数据处理模块]
+    end
 
-# Introduction
+    subgraph 医疗服务提供者接口
+        V[医生登录模块]
+        W[用户健康数据查看模块]
+        X[在线咨询模块]
+    end
 
-*[Chunjun 1.12 New Features](docs/changeLog.md)*
+    A -->|使用| F
+    B -->|使用| F
+    C -->|使用| G
+    D -->|使用| H
+    E -->|使用| I
 
-Chunjun is a data synchronization tool based on Flink. Chunjun can collect static data, such as MySQL, HDFS, etc, as well as real-time changing data, such as MySQL binlog, Kafka, etc. **At the same time, Chunjun is also a computing framework that supports all the syntax and features of native FlinkSql** , <big>**And provide a large number of [cases](Chunjun-examples)**</big>. Chunjun currently includes the following features:
+    F -->|调用| J
+    G -->|调用| K
+    H -->|调用| L
+    I -->|调用| Q
 
-- Most plugins support concurrent reading and writing of data, which can greatly improve the speed of reading and writing;
+    J -->|存取| N
+    K -->|存取| O
+    L -->|存取| P
 
-- Some plug-ins support the function of failure recovery, which can restore tasks from the failed location and save running time; [Failure Recovery](docs/restore.md)
+    J -->|通知| Q
+    L -->|通知| R
+    S -->|接收| T
 
-- The source plugin for relational databases supports interval polling. It can continuously collect changing data; [Interval Polling](docs/offline/reader/mysqlreader.md)
+    T -->|同步| J
+    U -->|处理| J
 
-- Some databases support opening Kerberos security authentication;  [Kerberos](docs/kerberos.md)
-
-- Limit the reading speed of source plugins and reduce the impact on business databases;
-
-- Save the dirty data when writing data;
-
-- Limit the maximum number of dirty data;
-
-- Multiple running modes: Local,Standalone,Yarn Session,Yarn Per;
-
-- **Synchronization tasks support transformer operations that execute flinksql syntax;**
-
-- **sql task support is [shared](docs/conectorShare.md) with flinkSql's own connectors;**
-
-The following databases are currently supported:
-
-|                        | Database Type  | Source                          | Sink                          | Lookup
-|:----------------------:|:--------------:|:-------------------------------:|:-------------------------------:|:-------------------------------:|
-| Batch Synchronization  | MySQL          | [doc](docs/connectors/mysql/mysql-source.md)        | [doc](docs/connectors/mysql/mysql-sink.md)      |[doc](docs/connectors/mysql/mysql-lookup.md)      |
-|                        | TiDB           || reference mysql                                 |reference mysql                                   |   
-|                        | Oracle         | [doc](docs/connectors/oracle/oracle-source.md)       | [doc](docs/connectors/oracle/oracle-sink.md)     |[doc](docs/connectors/oracle/oracle-lookup.md)      |
-|                        | Doris          |                                 | [doc](docs/connectors/doris/dorisbatch-sink.md)     |                    |
-|                        | SqlServer      | [doc](docs/connectors/sqlserver/sqlserver-source.md)    | [doc](docs/connectors/sqlserver/sqlserver-sink.md)  |[doc](docs/connectors/sqlserver/sqlserver-lookup.md)
-|                        | PostgreSQL     | [doc](docs/connectors/postgres/postgres-source.md) | [doc](docs/connectors/postgres/postgres-sink.md) | [doc](docs/connectors/postgres/postgres-lookup.md) |
-|                        | DB2            | [doc](docs/connectors/db2/db2-source.md)          | [doc](docs/connectors/db2/db2-sink.md)        | [doc](docs/connectors/db2/db2-lookup.md)
-|                        | ClickHouse     | [doc](docs/connectors/clickhouse/clickhouse-source.md)   | [doc](docs/connectors/clickhouse/clickhouse-sink.md) | [doc](docs/connectors/clickhouse/clickhouse-lookup.md)      |
-|                        | Greenplum      | [doc](docs/connectors/greenplum/greenplum-source.md)    | [doc](docs/connectors/greenplum/greenplum-sink.md)  |
-|                        | KingBase       | [doc](docs/connectors/kingbase/kingbase-source.md)     | [doc](docs/connectors/kingbase/kingbase-sink.md)   |
-|                        | MongoDB        | [doc](docs/connectors/mongodb/mongodb-source.md) | [doc](docs/connectors/mongodb/mongodb-sink.md) |[doc](docs/connectors/mongodb/mongodb-lookup.md) |
-|                        | SAP HANA  | [doc](docs/connectors/saphana/saphana-source.md)           | [doc](docs/connectors/saphana/saphana-sink.md)         |
-|                        | ElasticSearch7 | [doc](docs/connectors/elasticsearch7/es7-source.md) | [doc](docs/connectors/elasticsearch7/es7-sink.md) | [doc](docs/connectors/elasticsearch7/es7-sink.md) |
-|                        | FTP            | [doc](docs/connectors/ftp/ftp-source.md)          | [doc](docs/connectors/ftp/ftp-sink.md)        |
-|                        | HDFS           | [doc](docs/connectors/hdfs/hdfs-source.md)         | [doc](docs/connectors/hdfs/hdfs-sink.md)       |
-|                        | Stream         | [doc](docs/connectors/stream/stream-source.md)       | [doc](docs/connectors/stream/stream-sink.md) |
-|                        | Redis          |                                                  | [doc](docs/connectors/redis/redis-sink.md)      |[doc](docs/connectors/redis/redis-lookup.md)      |
-|                        | Hive           |                                                  | [doc](docs/connectors/hive/hive-sink.md)       |
-|                        | Solr          | [doc](docs/connectors/solr/solr-source.md)        | [doc](docs/connectors/solr/solr-sink.md)       |
-|                        | File           |  [doc](docs/connectors/file/file-source.md)
-| Stream Synchronization | Kafka          | [doc](docs/connectors/kafka/kafka-source.md)       | [doc](docs/connectors/kafka/kafka-sink.md)     |
-|                        | EMQX           | [doc](docs/connectors/emqx/emqx-source.md)        | [doc](docs/connectors/emqx/emqx-sink.md)      |
-|                        | MySQL Binlog   | [doc](docs/connectors/binlog/binlog-source.md)      |                                                |
-|                        | Oracle LogMiner | [doc](docs/connectors/logminer/LogMiner-source.md)   |                                            |
-|                        | Sqlserver CDC | [doc](docs/connectors/sqlservercdc/SqlserverCDC-source.md) |                                                |
-|                        | Postgres  CDC | [doc](docs/connectors/pgwal/Postgres-CDC.md) |                                                |
-
-# Quick Start
-
-Please click [Quick Start](docs/quickstart.md)
-
-# General Configuration
-
-Please click [General Configuration](docs/generalconfig.md)
-
-# Statistics Metric
-
-Please click [Statistics Metric](docs/statistics.md)
-
-# Iceberg
-Please click [Iceberg](docs/iceberg.md)
-
-# Kerberos
-
-Please click [Kerberos](docs/kerberos.md)
-
-# Questions
-
-Please click [Questions](docs/questions.md)
-
-# How to contribute Chunjun
-
-Please click [Contribution](docs/contribution.md)
-
-# License
-
-Chunjun is under the Apache 2.0 license. See the [LICENSE](http://www.apache.org/licenses/LICENSE-2.0) file for details.
+    V -->|查看| N
+    W -->|查看| O
+    X -->|咨询| I
